@@ -86,7 +86,6 @@ public class ItemsController extends LoggedController {
         if (item != null && item.getUser().getId() == currentUser().getId()) {
             item.setDone(!item.isDone());
             itemRepository.save(item);
-            System.out.println(item.getId());
             return item;
         }
         return null;
