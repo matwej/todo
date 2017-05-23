@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TODO - Items</title>
+    <div th:replace="fragments/header :: header-head"/>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <table class="table table-hover" id="items-table">
+        <thead>
+        <tr>
+            <th>Status</th>
+            <th>Content</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}" th:attr="data-id=${item.id}">
+            <td data-toggle="tooltip" title="Click to change status">
+                <i class="glyphicon glyphicon-ok" th:if="${item.done}"></i>
+            </td>
+            <td data-toggle="tooltip" title="Click to change status" th:text="${item.content}"></td>
+            <td>
+                <form th:action="@{/items/{id}(id=${item.id})}" th:method="delete" class="form-inline">
+                    <button class="btn btn-danger btn-sm"><i class="glyphicon glyphicon-trash"></i></button>
+                    <a th:href="@{/items/{id}/edit(id=${item.id})}" class="btn btn-sm btn-info">Edit</a>
+                </form>
+            </td>
+        </tr>
+        <form th:object="${item}" th:action="@{/items}" method="POST" class="form-inline">
+            <tr>
+                <td>
+                    <input type="checkbox" th:field="*{done}" />
+                </td>
+                <td>
+                    <div th:replace="fragments/form :: text_field(field='content')"/>
+                </td>
+                <td>
+                    <button class="btn btn-primary" name="Submit" value="Add" type="Submit">Add new</button>
+                </td>
+            </tr>
+        </form>
+        </tbody>
+    </table>
+</div>
+
+<script th:inline="javascript">
+    $(document).ready(function(){
+        $('#items-table tbody tr td:not(:last-child)').click(function(){
+            var tr = $(this).parent();
+            $.get('/items/'+tr.data('id')+'/done')
+            .done(function(resp){
+                if(resp) {
+                    var check = tr.children('td').first();
+                    if(check.has('i').length) {
+                        check.find('i').first().remove();
+                    } else {
+                        check.append('<i class="glyphicon glyphicon-ok"></i>');
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+
+<div th:replace="fragments/footer :: footer"/>
+
+</body>
+</html>

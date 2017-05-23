@@ -1,0 +1,62 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <div th:fragment="header-head">
+        <meta charset="UTF-8"/>
+        <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.7/css/bootstrap.min.css"
+              th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"
+              rel="stylesheet" media="screen"/>
+
+        <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+                th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+        <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    </div>
+</head>
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#main-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" th:href="@{/}">TODO</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="main-navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active':''}"><a th:href="@{/}">Home</a>
+                    </li>
+                    <li th:classappend="${#httpServletRequest.getRequestURI().contains('items') ? 'active':''}"
+                        sec:authorize="isAuthenticated()"><a th:href="@{/items}">Items</a></li>
+                </ul>
+                <div class="nav navbar-nav navbar-right">
+                    <span sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" name="logout" method="POST" class="form-inline">
+                            <span sec:authentication="name" class="navbar-text"></span>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <a class="btn btn-sm btn-primary navbar-btn" type="Submit"
+                               onclick="document.forms.logout.submit()">Log Out</a>
+                        </form>
+                    </span>
+                    <span sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/login}" class="btn btn-sm btn-primary navbar-btn">Sign in</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div th:if="${msg != null}" class="container">
+        <div class="alert" th:classappend="${'alert-' + msgType}" th:text="${msg}"></div>
+    </div>
+
+</div>
+
+</body>
+</html>
